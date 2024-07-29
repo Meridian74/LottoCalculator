@@ -1,30 +1,22 @@
 package localapp.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class NumbersByAged {
-	// kihúzott szám
-	int number;
+
+	// lottery number
+	private int number;
 	
-	// hány héttel ezelőtt húzták ki?
-	int weeksAgo = Integer.MAX_VALUE;
-	
+	// how many weeks ago was the lottery drawn?
+	private int weeksAgo = Integer.MAX_VALUE;
+
+
+	// constructor
 	public NumbersByAged(int number) {
 		this.number = number;
 	}
-	
-	public int getNumber() {
-		return number;
-	}
-	
-	public void setNumber(int number) {
-		this.number = number;
-	}
-	
-	public int getWeeksAgo() {
-		return weeksAgo;
-	}
-	
-	public void setWeeksAgo(int weeksAgo) {
-		this.weeksAgo = weeksAgo;
-	}
-	
+
 }

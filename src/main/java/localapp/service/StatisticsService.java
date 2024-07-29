@@ -1,7 +1,6 @@
 package localapp.service;
 
 import localapp.model.NumbersByAged;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -29,7 +28,7 @@ public class StatisticsService {
 			currentWeek++;
 		}
 		
-		// A lista rendezése a weeksAgo mező szerint, csökkenő sorrendben
+		// Sort the list by the weeksAgo field, in descending order
 		lotteryNumbers.sort(Comparator.comparingInt(NumbersByAged::getWeeksAgo).reversed());
 		
 		List<NumbersByAged> result = new ArrayList<>();

@@ -3,7 +3,6 @@ package localapp;
 import localapp.model.NumbersByAged;
 import localapp.service.HtmlReaderService;
 import localapp.service.StatisticsService;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +15,7 @@ public class Main {
 
 		try {
 			List<byte[]> lottery5numbers =  reader.getAllNumbersOfLottery5();
+			// take only 20 percentage of the numbers (--> 18 oldest numbers of the 90)
 			List<NumbersByAged> oldestNumbers = statistics.getOldestNumbers(lottery5numbers, 18);
 
 			int[] nums = new int[5];
