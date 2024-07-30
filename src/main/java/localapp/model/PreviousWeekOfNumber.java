@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class NumbersByAged {
+public class PreviousWeekOfNumber {
 
 	// lottery number
 	private int number;
@@ -15,7 +15,7 @@ public class NumbersByAged {
 
 
 	// constructor
-	public NumbersByAged(int number) {
+	public PreviousWeekOfNumber(int number) {
 		this.number = number;
 	}
 

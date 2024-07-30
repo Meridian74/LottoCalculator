@@ -41,9 +41,9 @@ public class HtmlReaderService {
 		return numbersStartIndex;
 	}
 	
-	private static byte[] getValuesFromRow(int numbersStartIndex, Element row) {
+	private static int[] getValuesFromRow(int numbersStartIndex, Element row) {
 		Elements cells = row.select("td");
-		byte[] values = new byte[5];
+		int[] values = new int[5];
 		
 		// Collect the number values
 		int index = 0;
@@ -54,8 +54,8 @@ public class HtmlReaderService {
 		return values;
 	}
 	
-	public List<byte[]> getAllNumbersOfLottery5() {
-		List<byte[]> results = new ArrayList<>();
+	public List<int[]> getAllNumbersOfLottery5() {
+		List<int[]> results = new ArrayList<>();
 		
 		// Load the HTML document from the URL
 		Document document = getDocument(LOTTO5_URL);
