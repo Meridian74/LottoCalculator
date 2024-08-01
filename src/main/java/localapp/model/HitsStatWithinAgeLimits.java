@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AgeHit {
+public class HitsStatWithinAgeLimits {
 	
 	private int[] hits = new int[6]; // ez 5-ös lotónak megfelelő. 0 és az 5 szám. Ha Kenó, akkor 21 lesz a jó szám.
 	private int bottomBoundaryIndex;

@@ -2,13 +2,13 @@ package localapp.model;
 
 import java.util.*;
 
-public class LotteryDraw {
+public class LotteryDrawn {
 	
 	// az adott héten kisorsolt számok
 	List<Integer> currentWeekNumbers = new ArrayList<>();
 	
 	// az adott héten az összes számról adatlista, hogy hány héttel korábban voltak kisorsolva
-	List<PreviousWeekOfNumber> weeksHistory = new ArrayList<>();
+	List<WeeksAgoWasItPulled> weeksHistory = new ArrayList<>();
 	
 	
 	
@@ -17,7 +17,7 @@ public class LotteryDraw {
 		this.currentWeekNumbers = numbers;
 	}
 	
-	public void setWeeksHistory(List<PreviousWeekOfNumber> weeksHistory){
+	public void setWeeksHistory(List<WeeksAgoWasItPulled> weeksHistory){
 		this.weeksHistory = weeksHistory;
 	}
 
@@ -25,7 +25,7 @@ public class LotteryDraw {
 		return this.currentWeekNumbers;
 	}
 	
-	public List<PreviousWeekOfNumber> getWeeksHistory() {
+	public List<WeeksAgoWasItPulled> getWeeksHistory() {
 		return this.weeksHistory;
 	}
 

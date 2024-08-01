@@ -1,8 +1,8 @@
 package localapp;
 
-import localapp.model.AgeHit;
-import localapp.model.HitCase;
-import localapp.model.PreviousWeekOfNumber;
+import localapp.model.HitsStatWithinAgeLimits;
+import localapp.model.HitsWithinAgeLimit;
+import localapp.model.WeeksAgoWasItPulled;
 import localapp.service.HtmlReaderService;
 import localapp.service.StatisticsService;
 import localapp.view.Show;
@@ -21,12 +21,14 @@ public class Main {
 
 			// -1 összes hét, 18 -> 20%
 			int range = 18;
-			List<AgeHit> hits = statistics.getValidHitsWithWeekAgeIndexRange(lottery5numbers, -1, range);
-			List<HitCase> hitCases = statistics.getMaximumCaseByHitIndex(hits);
-			show.showHitCasesMaximum(hitCases);
-			int bottom = hitCases.get(5).getBottomIndex();
-			int upper = hitCases.get(5).getUpperIndex();
-			List<PreviousWeekOfNumber> oldestNumbers = statistics.getOldestNumberWithBoundaries(lottery5numbers, bottom, upper);
+			List<HitsStatWithinAgeLimits> hits = statistics.getAllHitsStatWithinAgeLimits(lottery5numbers, -1, range);
+			List<HitsWithinAgeLimit> hitsWithinAgeLimits = statistics.getMaximumCaseByHitIndex(hits);
+			show.showHitCasesMaximum(hitsWithinAgeLimits);
+			
+			int bottom = hitsWithinAgeLimits.get(5).getBottomIndex();
+			int upper = hitsWithinAgeLimits.get(5).getUpperIndex();
+			
+			List<WeeksAgoWasItPulled> oldestNumbers = statistics.getOldestNumberWithBoundaries(lottery5numbers, bottom, upper);
 			
 			// show selectable Lottery numbers
 			show.showLotteryNumbersCanChoose(oldestNumbers);

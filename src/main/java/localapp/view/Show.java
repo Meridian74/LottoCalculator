@@ -1,8 +1,8 @@
 package localapp.view;
 
-import localapp.model.HitCase;
-import localapp.model.LotteryDraw;
-import localapp.model.PreviousWeekOfNumber;
+import localapp.model.HitsWithinAgeLimit;
+import localapp.model.LotteryDrawn;
+import localapp.model.WeeksAgoWasItPulled;
 import localapp.service.StatisticsService;
 
 import java.util.*;
@@ -16,20 +16,20 @@ public class Show {
 	}
 	
 	
-	public void showLotteryNumbersCanChoose(List<PreviousWeekOfNumber> numbers) {
+	public void showLotteryNumbersCanChoose(List<WeeksAgoWasItPulled> numbers) {
 		System.out.println("Ajánlottan választható számok: ");
 		
-		List<PreviousWeekOfNumber> orderedList = new ArrayList<>(numbers);
-		orderedList.sort(Comparator.comparingInt(PreviousWeekOfNumber::getNumber));
-		List<Integer> playableNums = orderedList.stream().map(PreviousWeekOfNumber::getNumber).toList();
+		List<WeeksAgoWasItPulled> orderedList = new ArrayList<>(numbers);
+		orderedList.sort(Comparator.comparingInt(WeeksAgoWasItPulled::getNumber));
+		List<Integer> playableNums = orderedList.stream().map(WeeksAgoWasItPulled::getNumber).toList();
 		System.out.println(playableNums);
 		
-		for (PreviousWeekOfNumber element : orderedList) {
+		for (WeeksAgoWasItPulled element : orderedList) {
 			System.out.println("szám: " + element.getNumber() + " --> " + element.getWeeksAgo() + " héttel ezelőtt húzták ki.");
 		}
 	}
 	
-	public void select5number(List<PreviousWeekOfNumber> oldestNumbers) {
+	public void select5number(List<WeeksAgoWasItPulled> oldestNumbers) {
 		int[] nums = new int[5];
 		// mix the sequence of numbers...
 		Collections.shuffle(oldestNumbers);
@@ -65,7 +65,7 @@ public class Show {
 		}
 		
 		// meghatározzuk a korábbi húzásoknál milyen régiek voltak az kihúzott számok
-		List<LotteryDraw> data = this.statisticsService.getLotteryDrawPreviousWeeksHistory(lotteryNumbers);
+		List<LotteryDrawn> data = this.statisticsService.getLotteryDrawPreviousWeeksHistory(lotteryNumbers);
 		
 		
 		// végig megyünk minden egyes hét kihúzott számait, meg vizsgálva ekkor ezek milyen régiek voltak
@@ -75,8 +75,8 @@ public class Show {
 			System.out.println("***************************************");
 			
 			// kell az adott héten a számok régiségi adatai, ezt csökkenő sorrendbe rendezünk a határértékek vizsgálathoz
-			List<PreviousWeekOfNumber> weekHistory = new ArrayList<>(data.get(index).getWeeksHistory());
-			weekHistory.sort(Comparator.comparingInt(PreviousWeekOfNumber::getWeeksAgo).reversed());
+			List<WeeksAgoWasItPulled> weekHistory = new ArrayList<>(data.get(index).getWeeksHistory());
+			weekHistory.sort(Comparator.comparingInt(WeeksAgoWasItPulled::getWeeksAgo).reversed());
 			
 			
 			for (Integer lotteryNumber : data.get(index).getCurrentWeekNumbers()) {
@@ -114,13 +114,13 @@ public class Show {
 		System.out.println();
 	}
 	
-	public void showHitCasesMaximum(List<HitCase> hitCases) {
-		for (HitCase hitCase: hitCases) {
-			System.out.println("maximum " + hitCase.getHit() + " találat");
+	public void showHitCasesMaximum(List<HitsWithinAgeLimit> hitsWithinAgeLimits) {
+		for (HitsWithinAgeLimit hitsWithinAgeLimit : hitsWithinAgeLimits) {
+			System.out.println("maximum " + hitsWithinAgeLimit.getHitIndex() + " találat");
 			System.out.println("----------------------------");
-			System.out.println(" maximum esetszám: " + hitCase.getVolume());
-			System.out.println(" alsó index érték: " + hitCase.getBottomIndex());
-			System.out.println("felső index érték: " + hitCase.getUpperIndex());
+			System.out.println(" maximum esetszám: " + hitsWithinAgeLimit.getQuantity());
+			System.out.println(" alsó index érték: " + hitsWithinAgeLimit.getBottomIndex());
+			System.out.println("felső index érték: " + hitsWithinAgeLimit.getUpperIndex());
 			System.out.println("---------------------------");
 			System.out.println();
 		}

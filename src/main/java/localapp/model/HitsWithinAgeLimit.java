@@ -11,9 +11,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HitCase {
-	int hit;
-	int volume;
+public class HitsWithinAgeLimit {
+	int hitIndex;
+	int quantity;
 	int bottomIndex;
 	int upperIndex;
 }
