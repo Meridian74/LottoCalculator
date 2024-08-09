@@ -10,43 +10,59 @@ public class StatisticsService {
 
     protected final LottoType type;
 
+    // konstruktor - beállítja melyik típusú játékról van szó.
     public StatisticsService(LottoType type) {
         this.type = type;
     }
 
-    protected List<WeeksAgoWasItPulled> getPreviousWeekOfNumbers(List<int[]> data) {
-        List<WeeksAgoWasItPulled> lotteryNumbers = new ArrayList<>();
 
+    /**
+     * Visszamenőlegesen elkészül egy heti számstatisztika, arról hogy melyik számot milyen régen (hány húzással ezelőtt)
+     * húzták ki.
+     * @param data a hetente kihúzott számok listája. Az összes hét adatai együtt.
+     * @return lista, benne minden egyes szám és az, hogy ezt a számot hány húzással ezelőtt húzták ki.
+     */
+    protected List<WeeksAgoWasItPulled> getPreviousWeekOfNumbers(List<int[]> data) {
+        List<WeeksAgoWasItPulled> result = new ArrayList<>();
+
+        // beállítjuk az eredménylistába a játék összes számát sorrendben
         for (int id = 1; id <= this.type.getAllNumber(); id++) {
             WeeksAgoWasItPulled num = new WeeksAgoWasItPulled(id);
-            lotteryNumbers.add(num);
+            result.add(num);
         }
-        int currentWeek = 0;
-        int setCounter = 0;
-        for (int[] currentData : data) {
+
+        // az éppen aktuális legutolsó hetet kihagytuk a 'List<int[]> data'-val kapott listában!
+        int currentWeek = 1;
+        int already = 0;
+
+        // végigmegyünk a hetente kihúzott számokon
+        for (int[] drawnedNumbers : data) {
+
+            // szerepelt a kihúzott számok közt a kihúzott szám, akkor beállítjuk ez milyen régen volt
             for (int index = 0; index < this.type.getType(); index++) {
-                int number = currentData[index];
+                int number = drawnedNumbers[index];
                 int numberAsId = number - 1;
-                WeeksAgoWasItPulled storedNumber = lotteryNumbers.get(numberAsId);
-                if (currentWeek < storedNumber.getWeeksAgo()) {
-                    storedNumber.setWeeksAgo(currentWeek);
+                WeeksAgoWasItPulled storedNumber = result.get(numberAsId);
+                if (currentWeek < storedNumber.getLatestWeek()) {
+                    storedNumber.setLatestWeek(currentWeek);
                 }
             }
 
-            // have all the numbers been already found?
-            if (setCounter == type.getAllNumber() + 10) {
+            // az eredménylistában minden szám egyszer már beállításra került?
+            if (already == type.getAllNumber()) {
                 break;
             }
 
-            // step to next week
             currentWeek++;
-        }
-        return lotteryNumbers;
+        } // end for
+
+        return result;
     }
 
 
     /**
-     * Az isMain paraméter a EuroJackpot miatt kell, itt két külön viszgálat van.. a főszámokra, és a mellékszámokra.
+     *
+     * Az isMain paraméter a EuroJackpot miatt kell, itt két külön vizsgálat van.. a főszámokra, és a mellékszámokra.
      * Más esetben üres listával térünk vissza ha false ez az érték, és rendes listával ha true.
      *
      * @param lotteryHistory
@@ -69,8 +85,8 @@ public class StatisticsService {
         int theMostRecentIndex = theOldestIndex + maxItem - 1;
         List<WeeksAgoWasItPulled> weekHistory = new ArrayList<>(lotteryHistory.get(1).getWeeksHistory());
 
-        // eurojackpotnál ezt másképpen kell majd! a plusz két szám miatt
-        weekHistory.sort(Comparator.comparingInt(WeeksAgoWasItPulled::getWeeksAgo).reversed());
+        // ...EuroJackpot-nál ezt másképpen kell elvégezni, a plusz két szám miatt - lásd override-olt metódusban!
+        weekHistory.sort(Comparator.comparingInt(WeeksAgoWasItPulled::getLatestWeek).reversed());
 
         // visszatérünk a megfelelő mennyiséggel a lista elejéről, azaz a legrégebbi számokkal
         return new ArrayList<>(weekHistory.subList(theOldestIndex, theMostRecentIndex));
@@ -79,18 +95,18 @@ public class StatisticsService {
     public List<LotteryDrawn> getLotteryDrawPreviousWeeksHistory(List<int[]> data) {
         ArrayList<LotteryDrawn> result = new ArrayList<>();
         int lastIndex = data.size();
-        // take every lottery draw in order
+        // Vesszük a húzások számait a húzások szerinti sorrendben
         for (int startIndex = 0; startIndex < lastIndex; startIndex++) {
             LotteryDrawn lotteryDrawn = new LotteryDrawn();
 
-            // save numbers of current week
+            // elmentjük a számokat
             lotteryDrawn.setCurrentWeekNumbers(
                     Arrays.stream(data.get(startIndex))
                             .boxed()
                             .toList()
             );
 
-            // calculate weekHistories of all number (1-90) and save
+            // megvizsgáljuk minden egyes héten állva, hogy onnan visszamenőleg milyen régen voltak az egyes számok kihúzva
             List<WeeksAgoWasItPulled> currentWeekHistories = getPreviousWeekOfNumbers(data.subList(startIndex, lastIndex));
             lotteryDrawn.setWeeksHistory(currentWeekHistories);
             result.add(lotteryDrawn);
@@ -99,4 +115,67 @@ public class StatisticsService {
         return result;
     }
 
+    public List<WeeksAgoWasItPulled> oldestPairOfMainNumber(List<int[]> data, int number) {
+        List<WeeksAgoWasItPulled> result = new ArrayList<>();
+
+        // amennyi számunk van annyiféle adat lesz majd, mindegyikhez külön-külön eltárolva.
+        int numberOfNums = this.type.getAllNumber();
+        for (int id = 1; id <= numberOfNums; id++) {
+            WeeksAgoWasItPulled num = new WeeksAgoWasItPulled(id);
+            result.add(num);
+        }
+
+        int already = 0;
+        int currentWeek = 0;
+        // végig megyünk a heti sorosolások kihúzott számait vizsgálva
+        for (int[] currentWeekData : data) {
+            // első menetben megnézzük, a kérdéses 'number' benne van-e a húzott számok között?
+            boolean isContained = false;
+            for (int index = 0; index < this.type.getType(); index++) {
+                if (currentWeekData[index] == number) {
+                    isContained = true;
+                    break;
+                }
+            }
+            // ha nincs, akkor vesszük e következő hét sorosála alkalmával kihúzott számokat
+            if (!isContained) {
+                currentWeek++;
+                continue;
+            }
+            // szerepelt a kihúzott számok közt a számunk, akkor beállítjuk ez milyen régen volt
+            for (int index = 0; index < this.type.getType(); index++) {
+                // a saját számunkat kihagyjuk
+                if (currentWeekData[index] == number) {
+                    continue;
+                }
+
+                // beírjuk az éppen adott hét idejét, de csak akkor ha még nem volt (ha a tárolt értéknél kisebb az idő
+                // ez értelemszerűen csak egyszer fog előfordulni mert a currentweek növekszik mindig)
+                int drawnedNumber = currentWeekData[index];
+                int transformedToIndex = drawnedNumber - 1;
+                WeeksAgoWasItPulled escortNumber = result.get(transformedToIndex);
+                if (currentWeek < escortNumber.getLatestWeek()) {
+                    escortNumber.setLatestWeek(currentWeek);
+                    already++;
+                }
+            }
+
+            // have all the numbers been already found?
+            if (already == type.getAllNumber()) {
+                break;
+            }
+
+            // step to next week
+            currentWeek++;
+        }
+
+        // a saját számot (number) kivesszük a listából, majd időrendi sorrendbe rendezve vissszatérünk az eredménylistával
+        result.remove(number - 1);
+        result.sort(Comparator.comparingInt(WeeksAgoWasItPulled::getLatestWeek).reversed());
+        return result;
+    }
+
+    public List<WeeksAgoWasItPulled> oldestPairOfSideNumber(List<int[]> data, int number) {
+        return Collections.emptyList();
+    }
 }

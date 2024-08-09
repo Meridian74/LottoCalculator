@@ -1,12 +1,13 @@
 package localapp.config;
 
+
 public enum LottoType {
 
     LOTTO_5("Ötös lottó", 5, 90,5, "https://bet.szerencsejatek.hu/cmsfiles/otos.html"),
     LOTTO_6("Hatos lottó", 6, 45,6, "https://bet.szerencsejatek.hu/cmsfiles/hatos.html"),
     LOTTO_7("Skandináv lottó", 7, 35,7, "https://bet.szerencsejatek.hu/cmsfiles/skandi.html"),
-    EURO_JACKPOT("Euro Jackpot", 7, 50, 7,"https://bet.szerencsejatek.hu/cmsfiles/eurojackpot.html"),
-    KENO("Kenó", 20,80, 20, "https://bet.szerencsejatek.hu/cmsfiles/keno.html");
+    EURO_JACKPOT("Euro Jackpot", 5, 50, 7,"https://bet.szerencsejatek.hu/cmsfiles/eurojackpot.html"),
+    KENO("Kenó", 20,80, 20, "./keno.csv");
 
 
     private final String name;

@@ -10,22 +10,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class HtmlReaderService {
+
+public class FileReaderService {
     protected final int type;
     protected final int allNumber;
     protected final int drawnedNumber;
-    private final String url;
+    protected final String url;
 
 
-    public HtmlReaderService(LottoType type) {
+    public FileReaderService(LottoType type) {
         this.type = type.getType();
         this.allNumber = type.getAllNumber();
         this.drawnedNumber = type.getDrawnedNumber();
         this.url = type.getUrl();
     }
 
+
     private Document getDocument() {
-        Document document = null;
+        Document document;
         try {
             document = Jsoup.connect(this.url).get();
         } catch (IOException exp) {
@@ -38,7 +40,7 @@ public class HtmlReaderService {
     private int getNumbersStartIndex(Elements headers) {
         int numbersStartIndex = -1;
 
-        // Determine the index of the desired columns
+        // A fejléc sorban a 'Számok' tartalmú cella indexe adja meg melyik oszlopindextől kezdődnek a számok adatai
         for (int i = 0; i < headers.size(); i++) {
             String header = headers.get(i).text();
             if (header.equalsIgnoreCase("Számok")) {
@@ -56,13 +58,9 @@ public class HtmlReaderService {
 
     protected int[] getValuesFromRow(int numbersStartIndex, Element row) {
         Elements cells = row.select("td");
-        int[] values = new int[this.type];
-        if (drawnedNumber == 20 && cells.get(3).getAllElements().text().contains("2004.03.13")) {
-            values = new int[]{1, 2, 17, 19, 20, 22, 24, 26, 30, 38, 39, 46, 47, 52, 57, 65, 66, 71, 75, 76};
-            return values;
-        }
+        int[] values = new int[this.drawnedNumber];
 
-        // Collect the number values
+        // Kigyűjtjük a sorban szereplő számokat, sorban attól az oszlopindextől kezdve ahonna a számok adatai kezdődnek
         int index = 0;
         for (int i = numbersStartIndex; i < numbersStartIndex + drawnedNumber; i++) {
             values[index] = Integer.parseInt(cells.get(i).text());
@@ -74,29 +72,30 @@ public class HtmlReaderService {
     protected List<int[]> readNumbersFromRows(Elements rows, int numbersStartIndex) {
         List<int[]> results = new ArrayList<>();
         for (Element row : rows) {
-            results.add(getValuesFromRow(numbersStartIndex, row)); // store returning an int[] filled with lottery numbers
+            // elmentjük a lottószámokkal feltöltött int[] tömböt
+            results.add(getValuesFromRow(numbersStartIndex, row));
         }
         return results;
     }
 
     public List<int[]> getAllNumbers() {
         List<int[]> results;
-
-        // Load the HTML document from the URL
         Document document = getDocument();
 
-        // Find the table in the HTML document
+        // Megkeressük a tábla elemet a HTML file-ban
         Element table = document.select("table").first();
 
-        // Extract the header row
+        // Vesszük a fejléc sorát a táblázatnak
         assert table != null;
         Elements headers = Objects.requireNonNull(table.select("tr").first()).select("th");
 
-        // find first column that contains lottery numbers
+        // Meghatározza a Számok kezdő oszlopának a helyét a táblázatban
         int numbersStartIndex = getNumbersStartIndex(headers);
 
-        // Extract the data rows
-        Elements rows = table.select("tr:gt(0)"); // Skip the header row
+        // Vesszük a táblázat sorait, kihagyva a fejléc sort
+        Elements rows = table.select("tr:gt(0)");
+
+        // Beolvassuk a számokat amik a sorokban vannak
         results = readNumbersFromRows(rows, numbersStartIndex);
 
         return results;

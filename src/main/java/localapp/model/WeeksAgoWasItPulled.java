@@ -3,6 +3,7 @@ package localapp.model;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Setter
 @Getter
 public class WeeksAgoWasItPulled {
@@ -11,7 +12,7 @@ public class WeeksAgoWasItPulled {
 	private int number;
 	
 	// how many weeks ago was the lottery drawn?
-	private int weeksAgo = Integer.MAX_VALUE;
+	private int latestWeek = Integer.MAX_VALUE;
 
 
 	// constructor

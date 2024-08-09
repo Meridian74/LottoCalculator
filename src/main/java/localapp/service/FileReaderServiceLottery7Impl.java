@@ -5,9 +5,9 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HtmlReaderServiceLottery7Impl extends HtmlReaderService {
+public class FileReaderServiceLottery7Impl extends FileReaderService {
 
-    public HtmlReaderServiceLottery7Impl(LottoType type) {
+    public FileReaderServiceLottery7Impl(LottoType type) {
         super(type);
     }
 
@@ -15,12 +15,12 @@ public class HtmlReaderServiceLottery7Impl extends HtmlReaderService {
     @Override
     public List<int[]> readNumbersFromRows(Elements rows, int numbersStartIndex) {
         List<int[]> results = new ArrayList<>();
-        // lotter7 data table has double row header, so index must start from 1
+        // A Skandináv lottó HTML-jében a táblázat fejléce duplasoros, ezért itt az index 1-től indul!
         for (int index = 1; index < rows.size(); index++) {
             var row = rows.get(index);
-            // store returning an int[] filled with lottery numbers, first 7 numbers
+            // Skandináv lottónál alkalmanként 2 húzás is van, ez az első húzás 7 száma
             results.add(getValuesFromRow(numbersStartIndex, row));
-            // store returning an int[] filled with lottery numbers, second 7 numbers
+            // A második húzás 7 száma
             results.add(getValuesFromRow(numbersStartIndex + 7, row));
         }
         return results;
