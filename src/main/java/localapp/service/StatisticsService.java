@@ -83,7 +83,7 @@ public class StatisticsService {
         // beállítjuk a szűrési határindexeket, a 0ik indexen a legrégebbi szám lesz a sorrendbe rendezés után
         int theOldestIndex = 0;
         int theMostRecentIndex = theOldestIndex + maxItem - 1;
-        List<WeeksAgoWasItPulled> weekHistory = new ArrayList<>(lotteryHistory.get(1).getWeeksHistory());
+        List<WeeksAgoWasItPulled> weekHistory = new ArrayList<>(lotteryHistory.get(0).getWeeksHistory());
 
         // ...EuroJackpot-nál ezt másképpen kell elvégezni, a plusz két szám miatt - lásd override-olt metódusban!
         weekHistory.sort(Comparator.comparingInt(WeeksAgoWasItPulled::getLatestWeek).reversed());
