@@ -77,9 +77,10 @@ public class StatisticServiceEuroJackpotImpl extends StatisticsService {
             lastIndex = 62;
         }
 
-        // az összes szám közül mennyit vegyünk
-        if (maxItem < 1) maxItem = 1;
-        if (maxItem > super.type.getAllNumber()) maxItem = super.type.getAllNumber();
+        // az összes szám közül mennyit vegyünk, ha tartományon kívüli az érték akkor az összeset
+        if (maxItem < 1 || maxItem > super.type.getAllNumber()) {
+            maxItem = super.type.getAllNumber();
+        }
 
         // beállítjuk a szűrési határindexeket, a 0ik indexen a legrégebbi szám lesz a sorrendbe rendezés után
         int theOldestIndex = 0;

@@ -30,10 +30,11 @@ public class Main {
 
             // mennyi számot vegyünk ki az eredménylistából: -1 all, 20% --> 0.2, 10% --> 0.1, 33% --> 0.33333
             int maxItem = (int) (type.getAllNumber() * 0.2) + 1;
+//            maxItem = -1;
             List<WeeksAgoWasItPulled> oldestMainNumbers = statistics.getOldestNumbers(historyData, maxItem, true);
 
             // Eurojackpot-nál vannak segédszámok, itt csak a 3 legrégebbit vesszük ki a kapot eredménylistából
-            maxItem = 3;
+            maxItem = 10;
             List<WeeksAgoWasItPulled> oldestSideNumbers = statistics.getOldestNumbers(historyData, maxItem, false);
             show.oldestNumbers(oldestMainNumbers, oldestSideNumbers);
 

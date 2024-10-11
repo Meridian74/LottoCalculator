@@ -76,14 +76,15 @@ public class StatisticsService {
             return Collections.emptyList();
         }
 
-        // az összes szám közül mennyit vegyünk
-        if (maxItem < 1) maxItem = 1;
-        if (maxItem > type.getAllNumber()) maxItem = type.getAllNumber();
+        // az összes szám közül mennyit vegyünk - ha nem megfelelő az élték (nincs tartományon belül) akkor az összeset
+        if (maxItem < 1 || maxItem > type.getAllNumber()) {
+            maxItem = type.getAllNumber();
+        }
 
         // beállítjuk a szűrési határindexeket, a 0ik indexen a legrégebbi szám lesz a sorrendbe rendezés után
         int theOldestIndex = 0;
-        int theMostRecentIndex = theOldestIndex + maxItem - 1;
-        List<WeeksAgoWasItPulled> weekHistory = new ArrayList<>(lotteryHistory.get(1).getWeeksHistory());
+        int theMostRecentIndex = theOldestIndex + maxItem;
+        List<WeeksAgoWasItPulled> weekHistory = new ArrayList<>(lotteryHistory.get(0).getWeeksHistory());
 
         // ...EuroJackpot-nál ezt másképpen kell elvégezni, a plusz két szám miatt - lásd override-olt metódusban!
         weekHistory.sort(Comparator.comparingInt(WeeksAgoWasItPulled::getLatestWeek).reversed());
